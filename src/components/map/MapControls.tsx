@@ -1,5 +1,5 @@
 import { useMap } from 'react-leaflet';
-import { Locate, ZoomIn, ZoomOut, Layers } from 'lucide-react';
+import { Locate, Layers } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 
@@ -9,16 +9,6 @@ import { useState } from 'react';
 export function MapControls() {
   const map = useMap();
   const [isLocating, setIsLocating] = useState(false);
-
-  // Handle zoom in
-  const handleZoomIn = () => {
-    map.zoomIn();
-  };
-
-  // Handle zoom out
-  const handleZoomOut = () => {
-    map.zoomOut();
-  };
 
   // Handle locate user
   const handleLocate = () => {

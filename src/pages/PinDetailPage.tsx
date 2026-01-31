@@ -7,7 +7,6 @@ import {
   Star, 
   Calendar, 
   Navigation,
-  Edit,
   Trash2,
   ExternalLink 
 } from 'lucide-react';
