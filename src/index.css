@@ -1,0 +1,197 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base styles */
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
+
+  * {
+    border-color: theme('colors.gray.200');
+  }
+}
+
+/* Custom component styles */
+@layer components {
+  /* Map container */
+  .map-container {
+    @apply w-full h-full;
+  }
+
+  /* Custom scrollbar */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400;
+  }
+
+  /* Button variants */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
+  }
+
+  .btn-secondary {
+    @apply btn bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-500;
+  }
+
+  .btn-ghost {
+    @apply btn bg-transparent text-gray-600 hover:bg-gray-100 focus:ring-gray-500;
+  }
+
+  .btn-danger {
+    @apply btn bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+  }
+
+  .btn-sm {
+    @apply px-3 py-1.5 text-sm;
+  }
+
+  .btn-md {
+    @apply px-4 py-2 text-sm;
+  }
+
+  .btn-lg {
+    @apply px-6 py-3 text-base;
+  }
+
+  /* Input styles */
+  .input {
+    @apply w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 placeholder-gray-400 transition-colors duration-200 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20;
+  }
+
+  .input-error {
+    @apply border-red-500 focus:border-red-500 focus:ring-red-500/20;
+  }
+
+  /* Card styles */
+  .card {
+    @apply bg-white rounded-xl shadow-card;
+  }
+
+  .card-hover {
+    @apply hover:shadow-card-hover transition-shadow duration-200;
+  }
+
+  /* Badge styles */
+  .badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+}
+
+/* Leaflet custom styles */
+@layer utilities {
+  /* Override Leaflet popup styles */
+  .leaflet-popup-content-wrapper {
+    @apply rounded-xl shadow-popup p-0 overflow-hidden;
+  }
+
+  .leaflet-popup-content {
+    @apply m-0 min-w-[280px];
+  }
+
+  .leaflet-popup-tip {
+    @apply bg-white;
+  }
+
+  .leaflet-popup-close-button {
+    @apply !top-2 !right-2 !text-gray-400 hover:!text-gray-600;
+  }
+
+  /* Custom marker styles */
+  .custom-marker {
+    @apply flex items-center justify-center w-10 h-10 rounded-full shadow-lg border-2 border-white;
+  }
+
+  .custom-marker-selected {
+    @apply ring-4 ring-primary-500/30 scale-110;
+  }
+
+  /* Route line pulse animation */
+  .route-line {
+    stroke-dasharray: 10, 10;
+    animation: dash 1s linear infinite;
+  }
+
+  @keyframes dash {
+    to {
+      stroke-dashoffset: -20;
+    }
+  }
+
+  /* Sidebar transition */
+  .sidebar-enter {
+    @apply transform -translate-x-full;
+  }
+
+  .sidebar-enter-active {
+    @apply transform translate-x-0 transition-transform duration-300 ease-out;
+  }
+
+  .sidebar-exit {
+    @apply transform translate-x-0;
+  }
+
+  .sidebar-exit-active {
+    @apply transform -translate-x-full transition-transform duration-300 ease-in;
+  }
+}
+
+/* Category-specific marker colors */
+.marker-restaurant {
+  @apply bg-category-restaurant;
+}
+
+.marker-hotel {
+  @apply bg-category-hotel;
+}
+
+.marker-attraction {
+  @apply bg-category-attraction;
+}
+
+.marker-shopping {
+  @apply bg-category-shopping;
+}
+
+.marker-transport {
+  @apply bg-category-transport;
+}
+
+.marker-other {
+  @apply bg-category-other;
+}
+
+/* Loading spinner */
+.spinner {
+  @apply w-6 h-6 border-2 border-gray-200 border-t-primary-600 rounded-full animate-spin;
+}
+
+/* Focus visible for accessibility */
+.focus-visible-ring {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2;
+}
