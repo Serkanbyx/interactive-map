@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { MapPage } from '@/pages/MapPage';
 import { PinDetailPage } from '@/pages/PinDetailPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
+import { Footer } from '@/components/ui';
 
 /**
  * Main application component
@@ -23,6 +24,9 @@ function App() {
         {/* 404 fallback */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      
+      {/* Author signature */}
+      <Footer />
     </div>
   );
 }

@@ -5,3 +5,4 @@ export { Select } from './Select';
 export { CategoryIcon } from './CategoryIcon';
 export { ConfirmDialog } from './ConfirmDialog';
 export { SearchInput } from './SearchInput';
+export { Footer } from './Footer';
