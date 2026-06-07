@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { X, Navigation, Clock, MapPin, Car, Footprints, Bike, AlertCircle } from 'lucide-react';
 import { usePinStore } from '@/store/pinStore';
 import { getDirections, isMapboxConfigured, type RouteProfile } from '@/services/mapbox.service';
@@ -14,7 +14,14 @@ export interface RoutePanelProps {
  * Route planning panel for getting directions between pins
  */
 export function RoutePanel({ onClose }: RoutePanelProps) {
-  const { pins, routeData, setRouteData, clearRoute } = usePinStore();
+  const {
+    pins,
+    routeData,
+    routeDestinationPin,
+    setRouteData,
+    setRouteDestinationPin,
+    clearRoute,
+  } = usePinStore();
   
   const [origin, setOrigin] = useState<Pin | null>(null);
   const [destination, setDestination] = useState<Pin | null>(null);
@@ -23,6 +30,20 @@ export function RoutePanel({ onClose }: RoutePanelProps) {
   const [error, setError] = useState<string | null>(null);
 
   const isConfigured = isMapboxConfigured();
+
+  // Prefill destination when a pin requested directions, then consume the flag
+  useEffect(() => {
+    if (routeDestinationPin) {
+      setDestination(routeDestinationPin);
+      setRouteDestinationPin(null);
+    }
+  }, [routeDestinationPin, setRouteDestinationPin]);
+
+  // Clear the route panel state when it closes
+  const handleClose = () => {
+    setRouteDestinationPin(null);
+    onClose();
+  };
 
   const handleGetDirections = async () => {
     if (!origin || !destination) return;
@@ -69,8 +90,9 @@ export function RoutePanel({ onClose }: RoutePanelProps) {
           <h3 className="font-semibold text-gray-900">Get Directions</h3>
         </div>
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="p-1 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
+          aria-label="Close route panel"
         >
           <X className="w-5 h-5" />
         </button>

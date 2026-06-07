@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { X, MapPin, Save } from 'lucide-react';
 import { usePinStore } from '@/store/pinStore';
 import { pinFormSchema, type PinFormInput } from '@/schemas/pin.schema';
-import { CATEGORIES, type Coordinates } from '@/types';
+import { CATEGORIES, type Coordinates, type Pin } from '@/types';
 import { generateId } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -12,17 +12,23 @@ import { Select } from '@/components/ui/Select';
 import { CategoryIcon } from '@/components/ui/CategoryIcon';
 
 export interface PinFormProps {
-  coordinates: Coordinates;
+  /** Coordinates for a new pin (create mode) */
+  coordinates?: Coordinates;
+  /** Existing pin to edit (edit mode) */
+  pin?: Pin;
   onSuccess: () => void;
   onCancel: () => void;
 }
 
 /**
- * Form for creating a new pin
+ * Form for creating or editing a pin
  * Uses React Hook Form with Zod validation
  */
-export function PinForm({ coordinates, onSuccess, onCancel }: PinFormProps) {
-  const { addPin } = usePinStore();
+export function PinForm({ coordinates, pin, onSuccess, onCancel }: PinFormProps) {
+  const { addPin, updatePin } = usePinStore();
+
+  const isEditing = !!pin;
+  const baseCoordinates = pin?.coordinates ?? coordinates;
 
   const {
     register,
@@ -32,23 +38,21 @@ export function PinForm({ coordinates, onSuccess, onCancel }: PinFormProps) {
   } = useForm<PinFormInput>({
     resolver: zodResolver(pinFormSchema),
     defaultValues: {
-      title: '',
-      description: '',
-      category: 'other',
-      lat: coordinates.lat,
-      lng: coordinates.lng,
-      address: '',
-      imageUrl: '',
+      title: pin?.title ?? '',
+      description: pin?.description ?? '',
+      category: pin?.category ?? 'other',
+      lat: baseCoordinates?.lat ?? 0,
+      lng: baseCoordinates?.lng ?? 0,
+      address: pin?.address ?? '',
+      imageUrl: pin?.imageUrl ?? '',
+      rating: pin?.rating,
     },
   });
 
   const selectedCategory = watch('category');
 
   const onSubmit = (data: PinFormInput) => {
-    const now = new Date().toISOString();
-    
-    const newPin = {
-      id: generateId(),
+    const sharedFields = {
       title: data.title,
       description: data.description,
       category: data.category,
@@ -58,11 +62,21 @@ export function PinForm({ coordinates, onSuccess, onCancel }: PinFormProps) {
       },
       address: data.address || undefined,
       imageUrl: data.imageUrl || undefined,
-      createdAt: now,
-      updatedAt: now,
+      rating: data.rating,
     };
 
-    addPin(newPin);
+    if (isEditing && pin) {
+      updatePin(pin.id, sharedFields);
+    } else {
+      const now = new Date().toISOString();
+      addPin({
+        id: generateId(),
+        ...sharedFields,
+        createdAt: now,
+        updatedAt: now,
+      });
+    }
+
     onSuccess();
   };
 
@@ -77,7 +91,7 @@ export function PinForm({ coordinates, onSuccess, onCancel }: PinFormProps) {
       <div className="bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3 text-white">
           <MapPin className="w-6 h-6" />
-          <h2 className="text-lg font-semibold">Add New Pin</h2>
+          <h2 className="text-lg font-semibold">{isEditing ? 'Edit Pin' : 'Add New Pin'}</h2>
         </div>
         <button
           onClick={onCancel}
@@ -215,6 +229,31 @@ export function PinForm({ coordinates, onSuccess, onCancel }: PinFormProps) {
           )}
         </div>
 
+        {/* Rating (optional) */}
+        <div>
+          <label htmlFor="rating" className="block text-sm font-medium text-gray-700 mb-1.5">
+            Rating <span className="text-gray-400">(optional, 0-5)</span>
+          </label>
+          <Input
+            id="rating"
+            type="number"
+            step="0.1"
+            min="0"
+            max="5"
+            placeholder="e.g. 4.5"
+            error={!!errors.rating}
+            {...register('rating', {
+              setValueAs: (value) =>
+                value === '' || value === null || value === undefined
+                  ? undefined
+                  : Number(value),
+            })}
+          />
+          {errors.rating && (
+            <p className="mt-1 text-sm text-red-500">{errors.rating.message}</p>
+          )}
+        </div>
+
         {/* Actions */}
         <div className="flex gap-3 pt-2">
           <Button type="button" variant="secondary" className="flex-1" onClick={onCancel}>
@@ -222,7 +261,7 @@ export function PinForm({ coordinates, onSuccess, onCancel }: PinFormProps) {
           </Button>
           <Button type="submit" className="flex-1" isLoading={isSubmitting}>
             <Save className="w-4 h-4" />
-            Save Pin
+            {isEditing ? 'Update Pin' : 'Save Pin'}
           </Button>
         </div>
       </form>

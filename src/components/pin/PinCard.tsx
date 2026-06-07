@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Star, Navigation, ExternalLink } from 'lucide-react';
+import { Star, Navigation, ExternalLink, Pencil } from 'lucide-react';
 import { usePinStore } from '@/store/pinStore';
 import { getCategoryMeta, type Pin } from '@/types';
 import { CategoryIcon } from '@/components/ui/CategoryIcon';
@@ -15,7 +15,7 @@ export interface PinCardProps {
  */
 export function PinCard({ pin }: PinCardProps) {
   const navigate = useNavigate();
-  const { selectedPin, selectPin } = usePinStore();
+  const { selectedPin, selectPin, setEditingPin, setRouteDestinationPin } = usePinStore();
   
   const isSelected = selectedPin?.id === pin.id;
   const categoryMeta = getCategoryMeta(pin.category);
@@ -27,6 +27,17 @@ export function PinCard({ pin }: PinCardProps) {
   const handleViewDetails = (e: React.MouseEvent) => {
     e.stopPropagation();
     navigate(`/pin/${pin.id}`);
+  };
+
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingPin(pin);
+  };
+
+  const handleDirections = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    selectPin(pin);
+    setRouteDestinationPin(pin);
   };
 
   return (
@@ -80,13 +91,23 @@ export function PinCard({ pin }: PinCardProps) {
             onClick={handleViewDetails}
             className="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
             title="View details"
+            aria-label="View details"
           >
             <ExternalLink className="w-4 h-4" />
           </button>
           <button
-            onClick={handleViewDetails}
+            onClick={handleEdit}
+            className="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+            title="Edit pin"
+            aria-label="Edit pin"
+          >
+            <Pencil className="w-4 h-4" />
+          </button>
+          <button
+            onClick={handleDirections}
             className="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
             title="Get directions"
+            aria-label="Get directions"
           >
             <Navigation className="w-4 h-4" />
           </button>

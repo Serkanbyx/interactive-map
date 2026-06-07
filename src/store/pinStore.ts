@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import type { Pin, PinCategory, FilterState, Coordinates, RouteData } from '@/types';
+import { samplePins } from '@/data/samplePins';
 
 /**
  * Pin store state interface
@@ -9,6 +10,8 @@ interface PinState {
   // Data
   pins: Pin[];
   selectedPin: Pin | null;
+  editingPin: Pin | null;
+  routeDestinationPin: Pin | null;
   routeData: RouteData | null;
   
   // UI State
@@ -24,6 +27,7 @@ interface PinState {
   updatePin: (id: string, updates: Partial<Pin>) => void;
   deletePin: (id: string) => void;
   selectPin: (pin: Pin | null) => void;
+  setEditingPin: (pin: Pin | null) => void;
   
   // Filter Actions
   setSearchQuery: (query: string) => void;
@@ -39,6 +43,7 @@ interface PinState {
   
   // Route Actions
   setRouteData: (route: RouteData | null) => void;
+  setRouteDestinationPin: (pin: Pin | null) => void;
   clearRoute: () => void;
   
   // Utility Actions
@@ -59,79 +64,6 @@ const defaultFilters: FilterState = {
 };
 
 /**
- * Sample pins for demo purposes
- * These will be replaced by API data when backend is integrated
- */
-const samplePins: Pin[] = [
-  {
-    id: '1',
-    title: 'Central Park',
-    description: 'A large public park in New York City, offering green spaces, lakes, and walking paths. Perfect for a relaxing day outdoors.',
-    category: 'attraction',
-    coordinates: { lat: 40.7829, lng: -73.9654 },
-    address: 'New York, NY 10024',
-    rating: 4.8,
-    createdAt: '2024-01-15T10:00:00Z',
-    updatedAt: '2024-01-15T10:00:00Z',
-  },
-  {
-    id: '2',
-    title: 'The Modern Restaurant',
-    description: 'Contemporary American cuisine in a sleek setting with views of the MoMA sculpture garden. Fine dining experience.',
-    category: 'restaurant',
-    coordinates: { lat: 40.7614, lng: -73.9776 },
-    address: '9 W 53rd St, New York, NY 10019',
-    rating: 4.5,
-    createdAt: '2024-01-16T14:30:00Z',
-    updatedAt: '2024-01-16T14:30:00Z',
-  },
-  {
-    id: '3',
-    title: 'Grand Central Terminal',
-    description: 'Historic train station and landmark featuring stunning Beaux-Arts architecture and a famous celestial ceiling.',
-    category: 'transport',
-    coordinates: { lat: 40.7527, lng: -73.9772 },
-    address: '89 E 42nd St, New York, NY 10017',
-    rating: 4.7,
-    createdAt: '2024-01-17T09:00:00Z',
-    updatedAt: '2024-01-17T09:00:00Z',
-  },
-  {
-    id: '4',
-    title: 'The Plaza Hotel',
-    description: 'Iconic luxury hotel overlooking Central Park, known for its elegant rooms and world-class service.',
-    category: 'hotel',
-    coordinates: { lat: 40.7645, lng: -73.9744 },
-    address: '768 5th Ave, New York, NY 10019',
-    rating: 4.6,
-    createdAt: '2024-01-18T11:00:00Z',
-    updatedAt: '2024-01-18T11:00:00Z',
-  },
-  {
-    id: '5',
-    title: 'Fifth Avenue Shopping',
-    description: 'World-famous shopping destination featuring luxury boutiques, department stores, and flagship stores.',
-    category: 'shopping',
-    coordinates: { lat: 40.7580, lng: -73.9755 },
-    address: '5th Ave, New York, NY',
-    rating: 4.4,
-    createdAt: '2024-01-19T13:00:00Z',
-    updatedAt: '2024-01-19T13:00:00Z',
-  },
-  {
-    id: '6',
-    title: 'Times Square',
-    description: 'Iconic commercial intersection known for bright lights, Broadway theaters, and bustling atmosphere.',
-    category: 'attraction',
-    coordinates: { lat: 40.7580, lng: -73.9855 },
-    address: 'Manhattan, NY 10036',
-    rating: 4.3,
-    createdAt: '2024-01-20T16:00:00Z',
-    updatedAt: '2024-01-20T16:00:00Z',
-  },
-];
-
-/**
  * Zustand store for pin management
  */
 export const usePinStore = create<PinState>()(
@@ -141,6 +73,8 @@ export const usePinStore = create<PinState>()(
         // Initial State
         pins: samplePins,
         selectedPin: null,
+        editingPin: null,
+        routeDestinationPin: null,
         routeData: null,
         filters: defaultFilters,
         isAddingPin: false,
@@ -187,6 +121,9 @@ export const usePinStore = create<PinState>()(
         selectPin: (pin) =>
           set({ selectedPin: pin }, false, 'selectPin'),
 
+        setEditingPin: (pin) =>
+          set({ editingPin: pin }, false, 'setEditingPin'),
+
         // Filter Actions
         setSearchQuery: (query) =>
           set(
@@ -227,7 +164,7 @@ export const usePinStore = create<PinState>()(
         // UI Actions
         setIsAddingPin: (isAdding) =>
           set(
-            { isAddingPin: isAdding, pendingCoordinates: isAdding ? null : null },
+            { isAddingPin: isAdding, pendingCoordinates: null },
             false,
             'setIsAddingPin'
           ),
@@ -249,8 +186,11 @@ export const usePinStore = create<PinState>()(
         setRouteData: (route) =>
           set({ routeData: route }, false, 'setRouteData'),
 
+        setRouteDestinationPin: (pin) =>
+          set({ routeDestinationPin: pin }, false, 'setRouteDestinationPin'),
+
         clearRoute: () =>
-          set({ routeData: null }, false, 'clearRoute'),
+          set({ routeData: null, routeDestinationPin: null }, false, 'clearRoute'),
 
         // Utility Actions
         setLoading: (isLoading) =>
@@ -292,6 +232,7 @@ export const usePinStore = create<PinState>()(
       }),
       {
         name: 'interactive-map-storage',
+        version: 1,
         partialize: (state) => ({
           pins: state.pins,
           filters: state.filters,

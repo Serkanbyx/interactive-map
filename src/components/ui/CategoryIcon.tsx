@@ -34,10 +34,3 @@ export function CategoryIcon({ category, size = 20, className }: CategoryIconPro
   const Icon = categoryIcons[category] || categoryIcons.other;
   return <Icon size={size} className={className} />;
 }
-
-/**
- * Get the icon component for a category
- */
-export function getCategoryIconComponent(category: PinCategory): LucideIcon {
-  return categoryIcons[category] || categoryIcons.other;
-}

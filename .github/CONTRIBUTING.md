@@ -83,23 +83,23 @@ Before suggesting, please check if:
 Make sure you have the following installed:
 
 - Git
-- A code editor (VS Code recommended)
-- Required runtime/dependencies for the project
+- Node.js 18 or higher
+- npm or yarn package manager
 
 ### Local Installation
 
 ```bash
 # Clone your fork
-git clone https://github.com/YOUR_USERNAME/REPOSITORY_NAME.git
+git clone https://github.com/YOUR_USERNAME/interactive-map.git
 
 # Navigate to project directory
-cd REPOSITORY_NAME
+cd interactive-map
 
-# Install dependencies (if applicable)
-# npm install / pip install -r requirements.txt / etc.
+# Install dependencies
+npm install
 
-# Start development server (if applicable)
-# npm start / python app.py / etc.
+# Start development server
+npm run dev
 ```
 
 ## Style Guidelines

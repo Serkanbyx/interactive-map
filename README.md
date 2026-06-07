@@ -107,11 +107,12 @@ npm run dev
 1. **Explore the Map**: Pan and zoom around the map to explore different locations
 2. **View Pins**: Click on any marker to view pin details in a popup
 3. **Add a Pin**: Click the "Add Pin" button, then click anywhere on the map to place a new pin
-4. **Fill Pin Details**: Enter title, description, select a category, and optionally add an address
-5. **Search Pins**: Use the search bar in the sidebar to find pins by name, description, or address
-6. **Filter by Category**: Click category buttons to filter pins by type
-7. **Get Directions**: Select a starting pin and destination pin to see the route on the map
-8. **Delete Pins**: Click on a pin and use the delete button to remove it
+4. **Fill Pin Details**: Enter title, description, select a category, and optionally add an address, image URL, and rating
+5. **Edit a Pin**: Use the edit (pencil) action on a pin card, marker popup, or detail page to update its details
+6. **Search Pins**: Use the search bar in the sidebar to find pins by name, description, or address
+7. **Filter by Category**: Click category buttons to filter pins by type
+8. **Get Directions**: Click the directions action on any pin (or open the Route panel) to plan a route to it
+9. **Delete Pins**: Open a pin's detail page and use the delete button to remove it
 
 ## How It Works?
 
@@ -121,11 +122,13 @@ The application uses Zustand for efficient state management:
 
 ```typescript
 interface PinState {
-  pins: Pin[];              // All map pins
-  selectedPin: Pin | null;  // Currently selected pin
-  routeData: RouteData | null;  // Active route data
-  filters: FilterState;     // Search and category filters
-  isAddingPin: boolean;     // Pin creation mode
+  pins: Pin[];                       // All map pins
+  selectedPin: Pin | null;           // Currently selected pin
+  editingPin: Pin | null;            // Pin currently being edited
+  routeDestinationPin: Pin | null;   // Pin requested as a route destination
+  routeData: RouteData | null;       // Active route data
+  filters: FilterState;              // Search and category filters
+  isAddingPin: boolean;              // Pin creation mode
 }
 ```
 
@@ -162,6 +165,7 @@ src/
 │   ├── route/          # Route components (RoutePanel)
 │   ├── sidebar/        # Sidebar components (Sidebar, Filters)
 │   └── ui/             # Reusable UI components (Button, Input, etc.)
+├── data/               # Seed/demo data (samplePins)
 ├── hooks/              # Custom React hooks
 ├── lib/                # Utility functions
 ├── pages/              # Page components
@@ -173,6 +177,10 @@ src/
 ├── main.tsx            # Entry point
 └── index.css           # Global styles
 ```
+
+## Build Guide
+
+A step-by-step build playbook documenting how this project was assembled (phases, steps, and acceptance criteria) is available at [docs/build-guide.md](docs/build-guide.md).
 
 ## Available Scripts
 

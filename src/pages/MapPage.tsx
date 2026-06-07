@@ -16,9 +16,12 @@ export function MapPage() {
     isSidebarOpen, 
     isAddingPin, 
     pendingCoordinates,
+    editingPin,
+    setEditingPin,
     setIsAddingPin,
     setPendingCoordinates,
     routeData,
+    routeDestinationPin,
   } = usePinStore();
 
   const [showRoutePanel, setShowRoutePanel] = useState(false);
@@ -39,20 +42,24 @@ export function MapPage() {
   const handlePinFormSuccess = useCallback(() => {
     setIsAddingPin(false);
     setPendingCoordinates(null);
-  }, [setIsAddingPin, setPendingCoordinates]);
+    setEditingPin(null);
+  }, [setIsAddingPin, setPendingCoordinates, setEditingPin]);
 
   // Handle form cancel
   const handlePinFormCancel = useCallback(() => {
     setIsAddingPin(false);
     setPendingCoordinates(null);
-  }, [setIsAddingPin, setPendingCoordinates]);
+    setEditingPin(null);
+  }, [setIsAddingPin, setPendingCoordinates, setEditingPin]);
 
-  // Show route panel when route data exists
+  // Show route panel when route data exists or a destination pin is requested
   useEffect(() => {
-    if (routeData) {
+    if (routeData || routeDestinationPin) {
       setShowRoutePanel(true);
     }
-  }, [routeData]);
+  }, [routeData, routeDestinationPin]);
+
+  const isPinFormOpen = !!pendingCoordinates || !!editingPin;
 
   return (
     <div className="relative h-full w-full flex">
@@ -85,12 +92,13 @@ export function MapPage() {
           </div>
         )}
 
-        {/* Pin form modal */}
-        {pendingCoordinates && (
-          <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+        {/* Pin form modal (create or edit) */}
+        {isPinFormOpen && (
+          <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/30 backdrop-blur-sm overflow-y-auto py-8">
             <div className="w-full max-w-md mx-4 animate-slide-up">
               <PinForm
-                coordinates={pendingCoordinates}
+                coordinates={pendingCoordinates ?? undefined}
+                pin={editingPin ?? undefined}
                 onSuccess={handlePinFormSuccess}
                 onCancel={handlePinFormCancel}
               />

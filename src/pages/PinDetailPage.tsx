@@ -8,7 +8,8 @@ import {
   Calendar, 
   Navigation,
   Trash2,
-  ExternalLink 
+  ExternalLink,
+  Pencil 
 } from 'lucide-react';
 import { usePinStore } from '@/store/pinStore';
 import { getCategoryMeta } from '@/types';
@@ -24,7 +25,7 @@ import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 export function PinDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { getPinById, deletePin, selectPin } = usePinStore();
+  const { getPinById, deletePin, selectPin, setEditingPin, setRouteDestinationPin } = usePinStore();
   
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   
@@ -53,6 +54,23 @@ export function PinDetailPage() {
   const handleShowOnMap = () => {
     if (pin) {
       selectPin(pin);
+      navigate('/map');
+    }
+  };
+
+  // Open the edit form for this pin on the map page
+  const handleEdit = () => {
+    if (pin) {
+      setEditingPin(pin);
+      navigate('/map');
+    }
+  };
+
+  // Start route planning with this pin as the destination
+  const handleGetDirections = () => {
+    if (pin) {
+      selectPin(pin);
+      setRouteDestinationPin(pin);
       navigate('/map');
     }
   };
@@ -88,11 +106,16 @@ export function PinDetailPage() {
             <Navigation className="w-4 h-4" />
             <span className="hidden sm:inline">Show on Map</span>
           </Button>
+          <Button variant="ghost" size="sm" onClick={handleEdit}>
+            <Pencil className="w-4 h-4" />
+            <span className="hidden sm:inline">Edit</span>
+          </Button>
           <Button 
             variant="ghost" 
             size="sm" 
             className="text-red-600 hover:bg-red-50"
             onClick={() => setShowDeleteConfirm(true)}
+            aria-label="Delete pin"
           >
             <Trash2 className="w-4 h-4" />
           </Button>
@@ -207,7 +230,11 @@ export function PinDetailPage() {
 
           {/* Actions */}
           <div className="flex gap-3">
-            <Button className="flex-1" onClick={handleShowOnMap}>
+            <Button variant="secondary" className="flex-1" onClick={handleEdit}>
+              <Pencil className="w-4 h-4" />
+              Edit Pin
+            </Button>
+            <Button className="flex-1" onClick={handleGetDirections}>
               <Navigation className="w-4 h-4" />
               Get Directions
             </Button>

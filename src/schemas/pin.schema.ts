@@ -77,6 +77,11 @@ export const pinFormSchema = z.object({
     .url('Please enter a valid URL')
     .optional()
     .or(z.literal('')),
+  rating: z
+    .number({ invalid_type_error: 'Rating must be a number' })
+    .min(0, 'Rating must be between 0 and 5')
+    .max(5, 'Rating must be between 0 and 5')
+    .optional(),
 });
 
 /**
@@ -86,7 +91,6 @@ export const pinSchema = pinFormSchema.extend({
   id: z.string().uuid(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-  rating: z.number().min(0).max(5).optional(),
 });
 
 /**

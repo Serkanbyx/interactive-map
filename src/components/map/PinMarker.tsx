@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import { useNavigate } from 'react-router-dom';
-import { Star, Navigation, ExternalLink } from 'lucide-react';
+import { Star, Navigation, ExternalLink, Pencil } from 'lucide-react';
 import { usePinStore } from '@/store/pinStore';
 import { createCategoryIcon } from './MarkerIcons';
 import { CategoryIcon } from '@/components/ui/CategoryIcon';
@@ -18,7 +18,7 @@ export interface PinMarkerProps {
  */
 export function PinMarker({ pin }: PinMarkerProps) {
   const navigate = useNavigate();
-  const { selectedPin, selectPin } = usePinStore();
+  const { selectedPin, selectPin, setEditingPin, setRouteDestinationPin } = usePinStore();
   
   const isSelected = selectedPin?.id === pin.id;
   const categoryMeta = getCategoryMeta(pin.category);
@@ -37,6 +37,17 @@ export function PinMarker({ pin }: PinMarkerProps) {
   // Navigate to pin detail page
   const handleViewDetails = () => {
     navigate(`/pin/${pin.id}`);
+  };
+
+  // Open the edit form for this pin
+  const handleEdit = () => {
+    setEditingPin(pin);
+  };
+
+  // Start route planning with this pin as the destination
+  const handleDirections = () => {
+    selectPin(pin);
+    setRouteDestinationPin(pin);
   };
 
   return (
@@ -82,20 +93,31 @@ export function PinMarker({ pin }: PinMarkerProps) {
           </div>
 
           {/* Actions */}
-          <div className="p-3 flex gap-2">
+          <div className="p-3 space-y-2">
+            <div className="flex gap-2">
+              <Button 
+                variant="secondary" 
+                size="sm" 
+                className="flex-1"
+                onClick={handleViewDetails}
+              >
+                <ExternalLink className="w-4 h-4" />
+                Details
+              </Button>
+              <Button 
+                variant="secondary" 
+                size="sm" 
+                className="flex-1"
+                onClick={handleEdit}
+              >
+                <Pencil className="w-4 h-4" />
+                Edit
+              </Button>
+            </div>
             <Button 
-              variant="secondary" 
               size="sm" 
-              className="flex-1"
-              onClick={handleViewDetails}
-            >
-              <ExternalLink className="w-4 h-4" />
-              Details
-            </Button>
-            <Button 
-              size="sm" 
-              className="flex-1"
-              onClick={handleViewDetails}
+              className="w-full"
+              onClick={handleDirections}
             >
               <Navigation className="w-4 h-4" />
               Directions

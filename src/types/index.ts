@@ -44,6 +44,7 @@ export interface PinFormData {
   lng: number;
   address?: string;
   imageUrl?: string;
+  rating?: number;
 }
 
 /**
