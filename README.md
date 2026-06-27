@@ -32,13 +32,19 @@ A modern, responsive interactive map application built with React, TypeScript, a
 
 The main interface displays an interactive map with a collapsible sidebar containing pin list, search functionality, and category filters.
 
+![Main Map View](docs/screenshots/main-map-view.png)
+
 ### Pin Management
 
 Click anywhere on the map to add a new pin. Fill in the details including title, description, category, and optional address.
 
+![Pin Management](docs/screenshots/pin-management.png)
+
 ### Route Directions
 
 Select any two pins to calculate and display the route between them with distance and duration information.
+
+![Route Directions](docs/screenshots/route-directions.png)
 
 ## Technologies
 
